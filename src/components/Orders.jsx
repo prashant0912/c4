@@ -1,6 +1,24 @@
+import { useEffect, useState } from "react";
+import { addorder } from "../Redux/actions";
+import {useDispatch,useSelector} from "react-redux"
+
 export const Orders = () => {
-  //  Get all data when admin logs in and populate it
-  // store it in redux
+  const [data,setData] = useState([])
+  const state = useSelector((store)=>store.orders);
+  const dispatch = useDispatch()
+
+
+  useEffect(()=>{
+    check()
+
+  },[])
+  
+
+  const check = async ()=>{
+    const orders = await fetch("http://localhost:8080/orders").then((d)=>d.json());
+    dispatch(addorder(orders))
+    
+    }
 
   return (
     <div>
@@ -12,7 +30,7 @@ export const Orders = () => {
             <option value="cost">Cost</option>
           </select>
         </div>
-        <table className="orders">
+        <><table className="orders">
           <thead>
             <tr>
               <th>ID</th>
@@ -24,14 +42,21 @@ export const Orders = () => {
               <th>Accept</th>
             </tr>
           </thead>
+          
           <tbody>
+            {state.map((e)=>{
+              return (
+
+            
             <tr className="orders-row">
-              <td className="id"></td>
-              <td className="problem"></td>
-              <td className="owner"></td>
-              <td className="status"></td>
-              <td className="cost"></td>
+              <td className="id">{e.id}</td>
+              <td className="problem">{e.problem}</td>
+              <td className="owner">{e.owner_name}</td>
+              <td className="status">{e.brand}</td>
+              <td className="cost">{e.cost}</td>
               <td className="change-status">
+            
+              
                 {/* Show select dropdown only if status is Not Accepted */}
                 <select className="changeStatus" name="changeStatus">
                   <option value="Pending">Pending</option>
@@ -46,9 +71,18 @@ export const Orders = () => {
                 <button>Accept</button>
               </td>
             </tr>
+              )
+            })}
+            
+            
           </tbody>
+          
+          
+      
         </table>
+        </>
       </div>
+      
     </div>
   );
 };
